@@ -896,6 +896,15 @@
 body {
     padding-bottom: 80px !important;
 }
+            .safety-toggle {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
     </style>
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0ea5e9">
@@ -914,6 +923,7 @@ body {
             <a href="#explore">Safety Catalog</a>
             <a href="#upi-radar">UPI Radar</a>
             <a href="#tools">Transit Engine</a>
+            <button class="safety-toggle" onclick="checkLocationSafety()">Enable Live Safety Scan</button>
         </nav>
     </header>
 
@@ -1356,7 +1366,22 @@ body {
             // Execute view transition state
             document.getElementById("feedbackWorkspace").style.display = "none";
             document.getElementById("feedbackSuccess").style.display = "block";
-        }
+        }// --- AUTO-DETECT SAFETY LEVEL ---
+function checkLocationSafety() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            // Simplified check: If latitude is within a certain range
+            // (You can expand this to include specific city coordinates)
+            if (latitude > 28.6 && latitude < 28.7) { 
+                console.log("High density tourist area detected.");
+                alert("Security Alert: You are in a high-density area. Keep your SOS panel active.");
+            }
+        });
+    }
+}
+// Run on load
+checkLocationSafety();
     </script>
     <!-- --- EMERGENCY QUICK-ACCESS SOS PANEL --- -->
 <div class="sos-mobile-panel">
