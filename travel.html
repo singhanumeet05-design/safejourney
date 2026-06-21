@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeJourney — Official Travel Safety & Anti-Fraud Catalog</title>
+    <style>
+        /* --- Core Reset & Premium Cyber-Midnight Theme Variables --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --bg-main: #0b1329;
+            --bg-card: #111c44;
+            --bg-input: #1c2b5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --accent-blue: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --accent-green: #10b981;
+            --accent-warning: #fbbf24;
+            --accent-danger: #f87171;
+            --whatsapp-green: #25d366;
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 0;
+        }
+
+        /* --- Government Compliance Banner --- */
+        .gov-banner {
+            background: linear-gradient(90deg, #020817, #0b1530, #020817);
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 0.7rem;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            text-transform: uppercase;
+            box-shadow: 0 2px 15px rgba(56, 189, 248, 0.1);
+        }
+
+        /* --- Sticky Navigation Bar --- */
+        header {
+            background-color: rgba(11, 19, 41, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .logo-sub {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-blue);
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+        }
+
+        /* --- Main Content Layout Grid --- */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* --- Hero Dashboard Block --- */
+        .hero-panel {
+            background: linear-gradient(135deg, #111c44 0%, #08112d 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2.5rem;
+            align-items: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .hero-left h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.15;
+            background: linear-gradient(to right, #fff, var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-left p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .tag-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .city-tag {
+            background-color: var(--bg-input);
+            border: 1px solid transparent;
+            color: #cbd5e1;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .city-tag:hover, .city-tag.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-hover));
+            color: #0b1329;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .hero-right {
+            background-color: rgba(11, 19, 41, 0.6);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            padding: 2.2rem;
+            border-radius: 16px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 0.85rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-hover));
+            color: #0b1329;
+            border: none;
+            padding: 0.85rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-action:hover {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .status-counter {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 0.85rem;
+        }
+
+        /* --- Global Safety Rules Bar --- */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .rule-card {
+            background: linear-gradient(180deg, #132254 0%, #0f1a3e 100%);
+            border-left: 4px solid var(--accent-warning);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-top: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .rule-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rule-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Master Panel Grid Layout (Cards + Emergency Sidebar) --- */
+        .catalog-layout-box {
+            display: grid;
+            grid-template-columns: 2.8fr 1.2fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* --- Section Titles --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 0.6rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Safety Cards Responsive Grid --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .safety-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .safety-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.1);
+        }
+
+        .card-img-frame {
+            height: 210px;
+            width: 100%;
+            background-color: #040a17;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-body h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pills-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .protection-pill {
+            background-color: rgba(16, 185, 129, 0.12);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .restriction-pill {
+            background-color: rgba(248, 113, 113, 0.12);
+            color: var(--accent-danger);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .card-body p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 1.4rem;
+        }
+
+        .restriction-box {
+            background-color: rgba(251, 191, 36, 0.06);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #ffe082;
+            margin-bottom: 1.4rem;
+        }
+
+        /* --- Action Buttons Row Inside Cards --- */
+        .card-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin-top: auto;
+        }
+
+        .btn-gallery {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            padding: 0.65rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-gallery:hover {
+            background-color: var(--accent-blue);
+            color: #061026;
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-share-wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background-color: rgba(37, 211, 102, 0.1);
+            color: var(--whatsapp-green);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            padding: 0.65rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-share-wa:hover {
+            background-color: var(--whatsapp-green);
+            color: #000;
+            border-color: var(--whatsapp-green);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        /* --- Professional Emergency Helpline Container --- */
+        .helpline-sidebar {
+            background: linear-gradient(145deg, #1d1b3c 0%, #0d122b 100%);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            border-radius: 16px;
+            padding: 1.8rem;
+            align-self: start;
+            position: sticky;
+            top: 90px;
+            box-shadow: 0 15px 35px rgba(248, 113, 113, 0.08);
+        }
+
+        .helpline-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--accent-danger);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(248, 113, 113, 0.2);
+            padding-bottom: 0.6rem;
+        }
+
+        .help-item {
+            background-color: rgba(11, 19, 41, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .help-item span {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .help-number {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-download-hub {
+            width: 100%;
+            background-color: #334155;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            margin-top: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-download-hub:hover {
+            background-color: #475569;
+        }
+
+        .help-notice {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* --- Interactive UPI Scam Radar --- */
+        .upi-container {
+            background: linear-gradient(135deg, #11204d 0%, #070e26 100%);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .upi-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .qr-box {
+            background-color: #fff;
+            padding: 1.2rem;
+            border-radius: 16px;
+            width: 210px;
+            height: 210px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 4px solid var(--accent-green);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .qr-box.scam {
+            border-color: var(--accent-danger);
+        }
+
+        .qr-badge {
+            position: absolute;
+            bottom: -12px;
+            background-color: var(--accent-green);
+            color: #0b1329;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .qr-badge.scam {
+            background-color: var(--accent-danger);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(248, 113, 113, 0.3);
+        }
+
+        .upi-btn-toggle {
+            background: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #cbd5e1;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 0.6rem;
+            transition: all 0.2s;
+        }
+
+        .upi-btn-toggle.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-hover));
+            color: #0b1329;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        /* --- Twin Panel Tools Row --- */
+        .tools-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .tool-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            padding: 2.2rem;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+
+        .tool-panel h2 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-panel .sub-label {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 1.6rem;
+        }
+
+        .tool-output {
+            margin-top: 1.5rem;
+            background-color: rgba(11, 19, 41, 0.5);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            padding: 1.4rem;
+            border-radius: 10px;
+            min-height: 100px;
+        }
+
+        .output-placeholder {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+            line-height: 4rem;
+        }
+
+        .route-info-box h4 {
+            color: var(--accent-blue);
+            margin-bottom: 0.4rem;
+            font-size: 1.1rem;
+        }
+
+        .route-info-box p {
+            font-size: 0.92rem;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+        }
+
+        .budget-item {
+            background-color: var(--bg-input);
+            padding: 0.85rem;
+            border-radius: 8px;
+            border-top: 3px solid var(--accent-blue);
+            text-align: center;
+        }
+
+        /* --- NEW SECTION: Premium Glass Feedback Workstation --- */
+        .feedback-section {
+            background: linear-gradient(135deg, #131b3e 0%, #0c112a 100%);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feedback-container {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .feedback-container h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feedback-container p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .rating-pool {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-node {
+            background-color: var(--bg-input);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rating-node:hover, .rating-node.selected {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-hover));
+            color: #0b1329;
+            transform: scale(1.08);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .feedback-form-block {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            background-color: rgba(11, 19, 41, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            height: 100px;
+            transition: all 0.3s;
+        }
+
+        .feedback-textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+        }
+
+        .success-state {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Professional Legal Footer --- */
+        footer {
+            background-color: #050b1a;
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            padding: 2.5rem 5%;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 2fr;
+            gap: 3rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .footer-title {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 950px) {
+            .hero-panel, .tools-row, .rules-grid, .footer-content, .catalog-layout-box, .upi-layout {
+                grid-template-columns: 1fr;
+            }
+            .helpline-sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gov-banner">🛡️ ANTI-FRAUD INTELLIGENCE PORTAL — PREMIUM CYBER THEME ACTIVE</div>
+
+    <header>
+        <div class="logo-block">
+            <span class="logo-title">🛡️ SafeJourney</span>
+            <span class="logo-sub">Tourism Protection Matrix</span>
+        </div>
+        <nav>
+            <a href="#rules">Anti-Fraud Rules</a>
+            <a href="#explore">Safety Catalog</a>
+            <a href="#upi-radar">UPI Radar</a>
+            <a href="#tools">Transit Engine</a>
+        </nav>
+    </header>
+
+    <div class="main-wrapper">
+
+        <!-- Unified Top Panel Workspace -->
+        <section class="hero-panel" id="explore">
+            <div class="hero-left">
+                <h1>Plan Smarter.<br>Explore Safely.</h1>
+                <p>Verify destinations instantly to confirm security metrics, active zone restrictions, and localized travel protection advice across India.</p>
+                <div class="tag-pool" id="tagPool"></div>
+            </div>
+            
+            <div class="hero-right">
+                <div class="input-group">
+                    <label>Search Verified Monument/Location</label>
+                    <div class="search-row">
+                        <input type="text" id="searchBar" class="form-input" placeholder="e.g., Red Fort, Taj Mahal, Shimla..." onkeypress="if(event.key === 'Enter') handleSearch()">
+                        <button class="btn-action" onclick="handleSearch()">Verify</button>
+                    </div>
+                </div>
+                <div class="status-counter">
+                    <div><strong id="cardCount">0</strong> Verified Zones</div>
+                    <div>Active Region: <strong id="currentFilterDisplay">All</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Professional Anti-Fraud Rules Row -->
+        <div class="section-header" id="rules">
+            <h2>Critical Anti-Fraud Directives</h2>
+        </div>
+        <div class="rules-grid">
+            <div class="rule-card">
+                <h4>⚠️ Pre-Paid Taxi Validation</h4>
+                <p>Never rely on street drivers claiming your hotel has 'closed down' or 'roads are blocked'. Insist on using official terminal booking booths.</p>
+            </div>
+            <div class="rule-card" style="border-left-color: var(--accent-blue);">
+                <h4>📱 UPI QR Code Verification</h4>
+                <p>Always double-check the recipient name on your payment screen before entering your secure UPI PIN at retail points.</p>
+            </div>
+            <div class="rule-card" style="border-left-color: var(--accent-green);">
+                <h4>🎫 Official ASI Digital Passes</h4>
+                <p>Skip lines and avoid manual ticketing middle agents. Buy secure entrance vouchers directly on the official ASI web architecture.</p>
+            </div>
+        </div>
+
+        <!-- Master Content Split Section -->
+        <div class="section-header">
+            <h2>Safety Protection Catalog</h2>
+        </div>
+        
+        <div class="catalog-layout-box">
+            
+            <!-- Left Side: Cards Array Container -->
+            <div class="cards-grid" id="cardsGridContainer">
+                <!-- JavaScript Renders Cards Securely Here -->
+            </div>
+
+            <!-- Right Side: Permanent Emergency Helpline Hub -->
+            <div class="helpline-sidebar">
+                <div class="helpline-title">🚨 National Emergency Hub</div>
+                
+                <div class="help-item">
+                    <span>All-in-One Helpline</span>
+                    <span class="help-number">112</span>
+                </div>
+                <div class="help-item">
+                    <span>National Tourist Helpline</span>
+                    <span class="help-number">1363</span>
+                </div>
+                <div class="help-item">
+                    <span>Police Dispatch Desk</span>
+                    <span class="help-number">100</span>
+                </div>
+                <div class="help-item">
+                    <span>Ambulance & Medical</span>
+                    <span class="help-number">102</span>
+                </div>
+                <div class="help-item">
+                    <span>Women Helpline Unit</span>
+                    <span class="help-number">1091</span>
+                </div>
+                <div class="help-item">
+                    <span>HP Tourist Police (Local)</span>
+                    <span class="help-number">112</span>
+                </div>
+
+                <button class="btn-download-hub" onclick="downloadSOSData()">💾 Download Emergency SOS File</button>
+
+                <div class="help-notice">
+                    These numbers are toll-free and fully functional across all standard Indian mobile networks 24/7.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Interactive UPI Scan Trainer Matrix -->
+        <div class="section-header" id="upi-radar">
+            <h2>Interactive UPI Scanner Radar</h2>
+        </div>
+        <section class="upi-container">
+            <div class="upi-layout">
+                <div style="text-align: center;">
+                    <div class="qr-box" id="qrBox">
+                        <svg width="140" height="140" viewBox="0 0 100 100" fill="currentColor" id="qrSvg">
+                            <path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,40 h20 v20 h-20 z M45,15 h10 v10 h-10 z M15,45 h10 v10 h-10 z M75,45 h15 v10 h-15 z M45,75 h10 v15 h-10 z"/>
+                        </svg>
+                        <div class="qr-badge" id="qrBadge">GENUINE MERCHANT</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size:1.3rem; margin-bottom:0.5rem;" id="scamTitle">Verified Official Storefront Code</h3>
+                    <p style="color:var(--text-muted); margin-bottom:1.5rem;" id="scamDesc">This code maps straight to a registered business checking entity. The layout display name will match the physical storefront banners completely.</p>
+                    <div>
+                        <button class="upi-btn-toggle active" id="btnGenuine" onclick="toggleUpiView(true)">Show Genuine Code</button>
+                        <button class="upi-btn-toggle" id="btnScam" onclick="toggleUpiView(false)">Show Tampered / Sticker Fraud</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Twin Tools Workstations -->
+        <div class="section-header" id="tools">
+            <h2>Regional Verification Utilities</h2>
+        </div>
+        <section class="tools-row">
+            
+            <!-- Tool 1: Smart Route Finder -->
+            <div class="tool-panel">
+                <h2>Transit Security Flow</h2>
+                <div class="sub-label">Generate verified route instructions alongside capped local municipal pricing limits.</div>
+                
+                <div class="input-group">
+                    <label>Select Route Path</label>
+                    <select id="routeDestination" class="form-input">
+                        <option value="delhi">Delhi — IGI Airport to Connaught Place</option>
+                        <option value="jaipur">Jaipur — Junction Station to City Palace</option>
+                        <option value="mumbai">Mumbai — Terminal 2 to Colaba Causeway</option>
+                    </select>
+                </div>
+
+                <button class="btn-action" style="width: 100%;" onclick="calculateRoute()">Verify Route Parameters</button>
+
+                <div class="tool-output" id="routeOutput">
+                    <div class="output-placeholder">— Choose a track to evaluate real-time fare caps. —</div>
+                </div>
+            </div>
+
+            <!-- Tool 2: AI Budget Splitter -->
+            <div class="tool-panel">
+                <h2>Security Cost Matrix</h2>
+                <div class="sub-label">Analyze your travel capital split to ensure optimal buffer reserves for certified tracking.</div>
+
+                <div class="input-group">
+                    <label>Total Budget Allowance (₹)</label>
+                    <input type="number" id="budgetAmount" class="form-input" value="15000">
+                </div>
+
+                <button class="btn-action" style="width: 100%;" onclick="calculateBudgetSplits()">Generate Matrix Layout</button>
+
+                <div class="tool-output" id="budgetOutput">
+                    <div class="output-placeholder">— Run matrix breakdown calculation parameters. —</div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- NEW SECTION: Premium Interactive Feedback Module -->
+        <section class="feedback-section">
+            <div class="feedback-container" id="feedbackWorkspace">
+                <h3>Portal Intelligence Feedback</h3>
+                <p>Help us improve your safety matrix. Rate your session experience or report an unmapped storefront fraud trap instantly.</p>
+                
+                <div class="rating-pool">
+                    <div class="rating-node" onclick="selectRating(this, 1)">1</div>
+                    <div class="rating-node" onclick="selectRating(this, 2)">2</div>
+                    <div class="rating-node" onclick="selectRating(this, 3)">3</div>
+                    <div class="rating-node" onclick="selectRating(this, 4)">4</div>
+                    <div class="rating-node" onclick="selectRating(this, 5)">5</div>
+                </div>
+
+                <div class="feedback-form-block">
+                    <textarea id="feedbackText" class="feedback-textarea" placeholder="Share your experience or report local safety anomalies..."></textarea>
+                    <button class="btn-action" style="align-self: center; padding: 0.8rem 2.5rem;" onclick="submitFeedback()">Submit Logs</button>
+                </div>
+            </div>
+
+            <div class="feedback-container success-state" id="feedbackSuccess">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">⚡</div>
+                <h3>Transmission Secure</h3>
+                <p style="margin-bottom: 0;">Thank you! Your feedback matrix data points have been safely logged into our client database layout.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Professional Legal & Risk Disclaimer Section -->
+    <footer>
+        <div class="footer-content">
+            <div>
+                <div class="footer-title">🛡️ SafeJourney Legal Notice</div>
+                <p>This tracking infrastructure serves as an educational safety reference compiled from open-source local community feedback. It does not replace live, updated directives from the Ministry of Tourism or local law enforcement agencies.</p>
+            </div>
+            <div>
+                <div class="footer-title">Anti-Fraud Disclaimer</div>
+                <p>SafeJourney explicitly disclaims liability for sudden route variations, meter tampering, pricing deviations, or transaction disputes arising at third-party commercial storefronts. Travelers are strictly urged to cross-verify physical badges and use cashless government portal infrastructures exclusively.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- --- Master Application Script Logic --- -->
+    <script>
+        const travelCatalog = [
+            { 
+                title: "Red Fort", 
+                city: "delhi", 
+                tier: "Govt Regulated", 
+                restriction: "ID Check Mandatory",
+                desc: "Scan the official government QR code frames posted directly along the sandstone walls. Ignore third-party vendors hawking fast-track passes outside.", 
+                image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'><rect width='100%' height='100%' fill='%237a2e2e'/><text x='50%' y='50%' font-family='Arial' font-size='24' font-weight='bold' fill='%23fff' text-anchor='middle'>RED FORT</text><text x='50%' y='65%' font-family='Arial' font-size='14' fill='%23ffb3b3' text-anchor='middle'>Verified Secure Monument Area</text></svg>",
+                rules: "No luggage bags or drones permitted on premise bounds."
+            },
+            { 
+                title: "Qutub Minar", 
+                city: "delhi", 
+                tier: "Policed Area", 
+                restriction: "Online Tickets Only",
+                desc: "Monitored constantly by security staff. Avoid accepting 'free tour assistance' from individuals without valid government badges.", 
+                image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'><rect width='100%' height='100%' fill='%238a6d4d'/><text x='50%' y='50%' font-family='Arial' font-size='24' font-weight='bold' fill='%23fff' text-anchor='middle'>QUTUB MINAR</text><text x='50%' y='65%' font-family='Arial' font-size='14' fill='%23ffe6cc' text-anchor='middle'>Verified Secure Monument Area</text></svg>",
+                rules: "Strict structural checkpoints are maintained at the inner gate perimeter."
+            },
+            { 
+                title: "Taj Mahal", 
+                city: "agra", 
+                tier: "High Security", 
+                restriction: "3-Hour Time Limit",
+                desc: "Standard internal ticket structures cost ₹50 for domestic citizens. Decline outside agents offering immediate entry loopholes.", 
+                image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'><rect width='100%' height='100%' fill='%233a536b'/><text x='50%' y='50%' font-family='Arial' font-size='24' font-weight='bold' fill='%23fff' text-anchor='middle'>TAJ MAHAL</text><text x='50%' y='65%' font-family='Arial' font-size='14' fill='%23d1e0ed' text-anchor='middle'>Verified Secure Monument Area</text></svg>",
+                rules: "Tobacco, electronic charging bricks, and tripods are strictly prohibited."
+            },
+            { 
+                title: "Agra Fort", 
+                city: "agra", 
+                tier: "ASI Protected", 
+                restriction: "No Drone Zone",
+                desc: "Only hire verified guides holding photo ID badges issued by the Ministry of Tourism. Verify rates at the ticket block counter.", 
+                image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'><rect width='100%' height='100%' fill='%23b06a3b'/><text x='50%' y='50%' font-family='Arial' font-size='24' font-weight='bold' fill='%23fff' text-anchor='middle'>AGRA FORT</text><text x='50%' y='65%' font-family='Arial' font-size='14' fill='%23ffe3d1' text-anchor='middle'>Verified Secure Monument Area</text></svg>",
+                rules: "Ensure you enter through the Amar Singh Gate node solely."
+            },
+            { 
+                title: "Hawa Mahal", 
+                city: "rajasthan", 
+                tier: "Monitored Strip", 
+                restriction: "Roadside Traffic Risk",
+                desc: "Observe the historic facade cleanly from street vantage points. For textiles or arts, shop exclusively at state emporiums for fixed pricing metrics.", 
+                image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'><rect width='100%' height='100%' fill='%239e4b5d'/><text x='50%' y='50%' font-family='Arial' font-size='24' font-weight='bold' fill='%23fff' text-anchor='middle'>HAWA MAHAL</text><text x='50%' y='65%' font-family='Arial' font-size='14' fill='%23ffd6dd' text-anchor='middle'>Verified Secure Monument Area</text></svg>",
+                rules: "Avoid street tour touts waiting by the lower exit corridors."
+            },
+            { 
+                title: "Shimla Mall Road", 
+                city: "himachal", 
+                tier: "Pedestrian Only", 
+                restriction: "No Vehicles Allowed",
+                desc: "A completely clean hill station corridor completely free of vehicles. Walk directly to the government HP Tourism lifts to go up seamlessly.", 
+                image: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'><rect width='100%' height='100%' fill='%231d4ed8'/><text x='50%' y='50%' font-family='Arial' font-size='24' font-weight='bold' fill='%23fff' text-anchor='middle'>SHIMLA MALL ROAD</text><text x='50%' y='65%' font-family='Arial' font-size='14' fill='%2393c5fd' text-anchor='middle'>Himachal Pradesh Safe Zone</text></svg>",
+                rules: "Spitting and littering draw sudden, heavy structural fines."
+            }
+        ];
+
+        const uniqueCities = ["all", "delhi", "rajasthan", "agra", "himachal"];
+        let currentCityFilter = "all";
+        let chosenRating = 0;
+
+        window.onload = function() {
+            buildCityTags();
+            renderCatalogGrid();
+        };
+
+        function buildCityTags() {
+            const container = document.getElementById("tagPool");
+            container.innerHTML = uniqueCities.map(city => {
+                const label = city.charAt(0).toUpperCase() + city.slice(1);
+                return `<span class="city-tag ${city === currentCityFilter ? 'active' : ''}" onclick="filterByCity('${city}')">${label}</span>`;
+            }).join('');
+        }
+
+        function filterByCity(targetCity) {
+            currentCityFilter = targetCity;
+            document.getElementById("searchBar").value = "";
+            buildCityTags();
+            renderCatalogGrid();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById("searchBar").value.toLowerCase().trim();
+            if(!query) {
+                renderCatalogGrid();
+                return;
+            }
+            const matched = travelCatalog.filter(p => p.title.toLowerCase().includes(query) || p.city.toLowerCase().includes(query));
+            document.getElementById("currentFilterDisplay").innerText = `Search: "${query}"`;
+            document.getElementById("cardCount").innerText = matched.length;
+            displaySelectedCards(matched);
+        }
+
+        function renderCatalogGrid() {
+            let set = travelCatalog;
+            if(currentCityFilter !== "all") {
+                set = travelCatalog.filter(p => p.city === currentCityFilter);
+            }
+            document.getElementById("currentFilterDisplay").innerText = currentCityFilter.toUpperCase();
+            document.getElementById("cardCount").innerText = set.length;
+            displaySelectedCards(set);
+        }
+
+        function displaySelectedCards(dataset) {
+            const container = document.getElementById("cardsGridContainer");
+            if(dataset.length === 0) {
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted);>No locations verified matching that term.</div>`;
+                return;
+            }
+            container.innerHTML = dataset.map(item => {
+                const googleImagesUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(item.title + ' ' + item.city)}`;
+                const rawMessage = `🚨 Travel Update Alert from SafeJourney Portal:\n📍 Location: ${item.title}\n🛡️ Security Status: ${item.tier}\n⚠️ Local Directive: ${item.restriction}\n👉 Guideline: ${item.rules}`;
+                const waShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(rawMessage)}`;
+
+                return `
+                    <div class="safety-card">
+                        <div class="card-img-frame">
+                            <img src="${item.image}" alt="${item.title}">
+                        </div>
+                        <div class="card-body">
+                            <h3>${item.title}</h3>
+                            <div class="pills-container">
+                                <span class="protection-pill">🛡️ ${item.tier}</span>
+                                <span class="restriction-pill">⚠️ ${item.restriction}</span>
+                            </div>
+                            <p>${item.desc}</p>
+                            <div class="restriction-box">
+                                <strong>Core Restriction:</strong> ${item.rules}
+                            </div>
+                            
+                            <div class="card-actions-row">
+                                <a href="${googleImagesUrl}" target="_blank" rel="noopener noreferrer" class="btn-gallery">
+                                    📸 View Photos
+                                </a>
+                                <a href="${waShareUrl}" target="_blank" rel="noopener noreferrer" class="btn-share-wa">
+                                    🟢 Share Status
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleUpiView(isGenuine) {
+            const qrBox = document.getElementById("qrBox");
+            const badge = document.getElementById("qrBadge");
+            const title = document.getElementById("scamTitle");
+            const desc = document.getElementById("scamDesc");
+            
+            document.getElementById("btnGenuine").classList.toggle("active", isGenuine);
+            document.getElementById("btnScam").classList.toggle("active", !isGenuine);
+
+            if (isGenuine) {
+                qrBox.classList.remove("scam");
+                badge.classList.remove("scam");
+                badge.innerText = "GENUINE MERCHANT";
+                title.innerText = "Verified Official Storefront Code";
+                desc.innerText = "This code maps straight to a registered business checking entity. The layout display name will match the physical storefront banners completely.";
+            } else {
+                qrBox.classList.add("scam");
+                badge.classList.add("scam");
+                badge.innerText = "⚠️ DETECTED SCAM STICKER";
+                title.innerText = "Sticker Overlay / Account Fraud Trap";
+                desc.innerText = "CRITICAL RISK: Scammers paste paper stickers over shop codes. The digital name on the UPI app will show a random personal account name instead of the shop name!";
+            }
+        }
+
+        function downloadSOSData() {
+            const dataStr = "=== NATIONAL EMERGENCY HELP INVENTORY ===\n\nAll helplines below operate 24/7 toll-free without internet data access:\n\n1. National SOS Emergency Hub: 112\n2. Tourist Protection Hotline: 1363\n3. Police Control Dispatch: 100\n4. Medical Response Emergency: 102\n5. Women Crisis Hotline: 1091\n\nFile compiled by SafeJourney Portal Matrix.";
+            const dataUri = 'data:text/plain;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'SafeJourney_SOS_Pass.txt';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function calculateRoute() {
+            const selection = document.getElementById("routeDestination").value;
+            const output = document.getElementById("routeOutput");
+            const data = {
+                delhi: { title: "Delhi Airport Transit", desc: "Board the Orange Express Metro Line inside terminal structures to Shivaji Stadium. Safe and completely immune to local street auto traps.", fare: "₹60 flat passenger ticket" },
+                jaipur: { title: "Jaipur Junction Access", desc: "Exit main platform terminal and check into an official prepaid booking stand. Track your route on a map app during the trip.", fare: "₹50 - ₹80 flat cap" },
+                mumbai: { title: "Mumbai Terminal 2 Corridor", desc: "Locate the official prepaid black-and-yellow taxi lane layout inside airport arrival lounges. Secure your code voucher before leaving the exit door.", fare: "₹650 flat rate check" }
+            }[selection];
+
+            output.innerHTML = `
+                <div class="route-info-box">
+                    <h4>📍 ${data.title}</h4>
+                    <p>${data.desc}</p>
+                    <p style="color:var(--accent-green)"><strong>Municipal Price Cap:</strong> ${data.fare}</p>
+                </div>`;
+        }
+
+        function calculateBudgetSplits() {
+            const val = parseFloat(document.getElementById("budgetAmount").value);
+            const output = document.getElementById("budgetOutput");
+            if (!val || val < 1000) {
+                output.innerHTML = `<div style="color:var(--accent-danger)">Please provide a budget above ₹1,000.</div>`;
+                return;
+            }
+            output.innerHTML = `
+                <div class="budget-grid">
+                    <div class="budget-item"><span>Safe Stay</span><strong>₹${Math.round(val * 0.5)}</strong></div>
+                    <div class="budget-item" style="border-top-color: var(--accent-green)"><span>Food Base</span><strong>₹${Math.round(val * 0.3)}</strong></div>
+                    <div class="budget-item" style="border-top-color: var(--accent-warning)"><span>Secure Transport</span><strong>₹${Math.round(val * 0.2)}</strong></div>
+                </div>`;
+        }
+
+        /* --- Feedback Controller Logic --- */
+        function selectRating(element, score) {
+            chosenRating = score;
+            const nodes = document.querySelectorAll('.rating-node');
+            nodes.forEach(n => n.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function submitFeedback() {
+            const text = document.getElementById("feedbackText").value.trim();
+            if(!chosenRating && !text) {
+                alert("Please select a score or write an entry input before sending.");
+                return;
+            }
+            
+            // Execute view transition state
+            document.getElementById("feedbackWorkspace").style.display = "none";
+            document.getElementById("feedbackSuccess").style.display = "block";
+        }
+    </script>
+</body>
+</html>
