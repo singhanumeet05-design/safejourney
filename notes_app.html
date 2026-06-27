@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Notes - Pro Glass Edition</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* Base Fluid Presentation Layer */
+        body {
+            background: linear-gradient(135deg, #05060F, #120724, #031424, #07241E);
+            background-size: 400% 400%;
+            animation: fluidMatrix 16s ease infinite;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        @keyframes fluidMatrix {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .phone-container {
+            background: rgba(16, 16, 26, 0.45);
+            backdrop-filter: blur(25px) saturate(160%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            width: 360px;
+            height: 680px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        .app-toast {
+    position: absolute;
+    top: -100px; left: 20px; right: 20px;
+    background: rgba(255, 255, 255, 0.08); 
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    padding: 16px 20px;
+    border-radius: 20px; 
+    color: #FFF; 
+    font-size: 13px; 
+    font-weight: 600;
+    text-align: center; 
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    z-index: 500;
+}.app-toast.luxury-glass {
+    border: 1px solid rgba(0, 153, 255, 0.6);
+    background: rgba(0, 153, 255, 0.15);
+    box-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
+}
+        .app-toast.show { top: 20px; }
+        
+        .settings-drawer {
+            position: absolute; top: 0; left: -280px; width: 260px; height: 100%;
+            background: rgba(18, 18, 30, 0.95); backdrop-filter: blur(30px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); z-index: 150;
+            padding: 35px 22px; box-sizing: border-box; color: white;
+        }
+        .settings-drawer.open { left: 0; }
+        .settings-drawer h2 { margin-top: 0; font-size: 22px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; margin: 24px 0; font-size: 14px; }
+        .setting-item input { accent-color: #0099FF; transform: scale(1.1); }
+        .close-settings { position: absolute; top: 18px; right: 18px; font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.5); }
+        
+        .redeem-modal {
+                 position: absolute; top: 0; left: 0; width: 100%; height: 100%;background: rgba(10, 10, 18, 0.85); backdrop-filter: blur(25px);-webkit-backdrop-filter: blur(25px);z-index: 180; display: none; justify-content: center; align-items: center;}
+        .redeem-card {
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px; width: 85%; padding: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .redeem-card h3 { color: white; margin: 0 0 10px 0; font-size: 18px; }
+        .redeem-card p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 16px 0; }
+        .redeem-input {
+            width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px; border-radius: 12px; color: white; text-align: center; font-size: 14px; font-weight: 700; outline: none; box-sizing: border-box; margin-bottom: 15px;
+        }
+        .sub-tier-row {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            padding: 12px 14px; border-radius: 14px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .sub-tier-row:hover { border-color: #0099FF; background: rgba(255,255,255,0.08); }
+        .sub-title { color: white; font-size: 13px; font-weight: 600; text-align: left; }
+        .sub-desc { color: #FFE866; font-size: 11px; margin-top: 2px; }
+        .sub-price { background: #0099FF; color: white; font-size: 12px; padding: 5px 12px; border-radius: 10px; font-weight: 700; }
+        .redeem-actions { display: flex; gap: 10px; }
+        .redeem-btn-action { flex: 1; padding: 10px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 13px; }
+        .btn-claim { background: linear-gradient(135deg, #00C6FF, #0072FF); color: white; }
+        .btn-close { background: rgba(255,255,255,0.1); color: white; }
+        .payment-input-group { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; text-align: left; }
+        .payment-input-group label { color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 600; margin-left: 4px; }
+
+        .screen-feed { display: flex; flex-direction: column; height: 100%; width: 100%; position: relative; }
+        .feed-header { padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .menu-icon { font-size: 24px; color: white; cursor: pointer; }
+        .header-right-group { display: flex; align-items: center; gap: 10px; }
+        .vip-sub-btn { background: linear-gradient(135deg, #00C6FF, #0072FF); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .coin-counter {
+            background: linear-gradient(135deg, #FFE866, #F39C12); color: #0B0B11; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 13px;
+            display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .coin-circle { width: 12px; height: 12px; background: #F1C40F; border-radius: 50%; border: 1.5px solid #0B0B11; }
+        .category-row { display: flex; gap: 10px; padding: 12px 22px; }
+        .tab-btn { background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.6); border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .tab-btn.active { background: linear-gradient(135deg, #0099FF, #0066FF); color: white; }
+        .content-body { flex: 1; padding: 15px 22px; overflow-y: auto; display: flex; flex-direction: column; }
+        .empty-state { margin: auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        
+        /* Ultra Cute Interactive RGB Dynamic Character */
+        .cartoon-canvas {
+            width: 120px; height: 120px; 
+            background: linear-gradient(135deg, #00C6FF, #0072FF);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            position: relative; 
+            animation: blobby 6s ease-in-out infinite alternate, rgbGlow 8s linear infinite;
+        }
+        @keyframes blobby { 
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: scale(1); } 
+            100% { border-radius: 50% 50% 30% 70% / 50% 60% 40% 60%; transform: scale(1.05); } 
+        }
+        @keyframes rgbGlow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        .cartoon-eyes { position: absolute; top: 40px; left: 32px; display: flex; gap: 28px; }
+        .cartoon-eyes::before, .cartoon-eyes::after { 
+            content: ''; width: 16px; height: 16px; background: #222; border-radius: 50%; display: block; position: relative;
+            background-image: radial-gradient(circle at 5px 5px, white 3px, transparent 4px);
+        }
+        .cartoon-cheeks { position: absolute; top: 54px; left: 22px; display: flex; gap: 50px; }
+        .cartoon-cheeks::before, .cartoon-cheeks::after { content: ''; width: 12px; height: 6px; background: rgba(255,100,150,0.5); border-radius: 50%; display: block; filter: blur(1px); }
+        .cartoon-smile { position: absolute; top: 62px; left: 48px; width: 24px; height: 14px; border-bottom: 4px solid #222; border-radius: 0 0 16px 16px; }
+        
+        .bubble-prompt { background: rgba(0, 153, 255, 0.15); color: #80C7FF; padding: 12px 22px; border-radius: 20px; font-size: 14px; font-weight: 600; border: 1px solid rgba(0, 153, 255, 0.25); }
+        .fab-btn { position: absolute; bottom: 35px; right: 25px; background: linear-gradient(135deg, #00C6FF, #0072FF); color: white; border: none; width: 58px; height: 58px; border-radius: 50%; font-size: 30px; cursor: pointer; z-index: 99; }
+
+        .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .saved-card { 
+            padding: 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); 
+            color: white; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .saved-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+        .saved-card h4 { margin: 0 24px 6px 0; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .saved-card p { margin: 0; font-size: 12px; opacity: 0.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .delete-card-btn {
+            position: absolute !important; top: 12px !important; right: 12px !important; width: 18px !important; height: 18px !important;
+            background: rgba(0, 0, 0, 0.3) !important; border-radius: 50% !important; color: #FFF !important;
+            display: flex !important; justify-content: center !important; align-items: center !important; font-size: 10px !important; font-weight: bold !important;
+            transition: 0.2s; z-index: 90 !important; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .delete-card-btn:hover { background: rgba(231, 76, 60, 0.8) !important; }
+
+        /* --- SCREEN 2: TEXT EDITOR PANEL --- */
+        .screen-editor { display: none; flex-direction: column; height: 100%; width: 100%; background: rgba(22, 22, 34, 0.95); position: relative; }
+        .editor-anim-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.25; display: none; z-index: 1; }
+        
+        .theme-anim-rain { background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.25)); background-size: 100% 25px; animation: lofiRain 0.5s linear infinite; }
+        @keyframes lofiRain { 0% { background-position: 0 0; } 100% { background-position: 0 400px; } }
+        .theme-anim-stars { background-image: radial-gradient(white 1px, transparent 0); background-size: 40px 400px; animation: starryPulse 3s linear infinite alternate; }
+        @keyframes starryPulse { 0% { opacity: 0.05; } 100% { opacity: 0.4; } }
+        .theme-anim-grid { background: linear-gradient(rgba(0, 204, 255, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 204, 255, 0.15) 1px, transparent 1px); background-size: 24px 24px; animation: gridScroll 2.5s linear infinite; }
+        @keyframes gridScroll { 0% { background-position: 0 0; } 100% { background-position: 0 24px; } }
+        .theme-anim-school { background: linear-gradient(rgba(173, 216, 230, 0.2) 1px, transparent 1px); background-size: 100% 24px; border-left: 2px solid rgba(255, 99, 71, 0.4); margin-left: 10px; }
+        .theme-anim-sport { background: radial-gradient(circle at 50% 50%, transparent 20px, rgba(255,255,255,0.05) 21px); background-size: 50px 50px; }
+        .theme-anim-nature { background: radial-gradient(circle at 100% 100%, transparent 40px, rgba(0,255,100,0.03) 41px); background-size: 80px 80px; }
+        .theme-anim-girls { background: radial-gradient(circle, rgba(255, 105, 180, 0.1) 15%, transparent 20%); background-size: 40px 40px; }
+        .theme-anim-boys { background: linear-gradient(45deg, rgba(0, 150, 255, 0.04) 25%, transparent 25%); background-size: 30px 30px; }
+        .theme-anim-boys { background: linear-gradient(45deg, rgba(0, 150, 255, 0.04) 25%, transparent 25%); }
+
+        /* FIXED UI PROTECTION BARRIER ARCHITECTURE: High contrast frames protect headers & controls */
+        .glass-header-shield {
+            background: rgba(10, 10, 20, 0.5) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        .glass-header-shield span, .glass-header-shield #currentCategoryLabel {
+            color: #FFFFFF !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .back-icon-circle {
+            background: rgba(255, 255, 255, 0.15);
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .editor-header, .editor-inputs, .bottom-toolbar { position: relative; z-index: 5; }
+        .editor-header { padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
+        .back-btn { font-size: 18px; cursor: pointer; color: white; }
+        .editor-inputs { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+        
+        /* Input Text Safety Rules: Shadowed text layer makes handwriting visible even on bright colors */
+        .input-title { background: transparent; border: none; font-size: 24px; font-weight: 700; outline: none; color: #FFF; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+        .input-text { background: transparent; border: none; font-size: 16px; outline: none; resize: none; flex: 1; color: rgba(255,255,255,0.95); line-height: 1.5; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+        
+        /* Light background overrides via theme engine mapping script triggers */
+        
+       
+
+        .checklist-container { display: none; flex-direction: column; gap: 8px; margin-bottom: 15px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 14px; }
+        .todo-item { display: flex; align-items: center; gap: 10px; color: white; }
+
+        .style-tray { display: none; background: rgba(20, 20, 32, 0.9); padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.08); gap: 14px; overflow-x: auto; align-items: center; }
+        .font-select { background: rgba(255,255,255,0.1); color: white; border: none; padding: 5px 10px; border-radius: 8px; font-size: 12px; }
+        .color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); }
+
+        /* FIXED UI: Dark Translucent Dock Backdrop Protective Bar Enclosing Bottom Toolbar Buttons (Pic 5 Rule!) */
+        .bottom-toolbar { 
+            background: rgba(10, 10, 18, 0.78) !important; 
+            backdrop-filter: blur(25px) saturate(120%) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(120%) !important;
+            margin: 10px 15px 20px 15px; padding: 12px 18px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+        }
+        .tool-widget-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: rgba(255, 255, 255, 0.45); }
+        .tool-widget-btn:hover, .tool-widget-btn.active { color: #0099FF !important; }
+        .vector-icon { width: 18px; height: 18px; fill: currentColor; }
+        .widget-label { font-size: 9px; font-weight: 700; letter-spacing: 0.3px; color: rgba(255,255,255,0.6); }
+        .tool-widget-btn.active .widget-label { color: #0099FF !important; }
+
+        .theme-drawer { position: absolute; bottom: -380px; left: 0; width: 100%; height: 350px;overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; background: rgba(20, 20, 30, 0.96); backdrop-filter: blur(30px); border-top: 1px solid rgba(255, 255, 255, 0.12); border-top-left-radius: 28px; border-top-right-radius: 28px; transition: bottom 0.4s ease; z-index: 160; }
+        .theme-drawer.open { bottom: 0; }
+        .drawer-tabs { display: flex; padding: 16px 20px; gap: 18px; scrollbar-width: none; -ms-overflow-style: none;border-bottom: 1px solid rgba(255,255,255,0.06); font-weight: 700; font-size: 13px; color: rgba(255,255,255,0.4); overflow-x: auto; white-space: nowrap; }
+        .theme-drawer::-webkit-scrollbar{display:none;}
+        .theme-drawer::-webkit-scrollbar-track{background:rgba(255,255,255,0.05); border-radius:20px;}
+        .theme-drawer::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#00e5ff,#6a5cff,#ff4fd8);border-radius:20px;box-shadow:0 0 10px rgba(0,229,255,0.6);}
+        .drawer-tabs span { cursor: pointer; padding-bottom: 4px; }
+        .drawer-tabs span.active { color: #0099FF; border-bottom: 2px solid #0099FF; }
+        .grid-container { padding: 18px; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .palette-cell { height: 68px; border-radius: 14px; cursor: pointer; position: relative; border: 2px solid transparent; font-size: 10px; font-weight: bold; color: #FFF; display: flex; justify-content: center; align-items: center; text-align: center; }
+        .palette-cell.active { border-color: #0099FF; box-shadow: 0 0 12px rgba(0,153,255,0.5); }
+        .crown-tag { position: absolute; top: 4px; right: 4px; font-size: 10px; background: rgba(0,0,0,0.4); border-radius: 50%; padding: 2px; z-index: 10; }
+   #sportThemes .palette-cell {
+    transition: 0.25s;
+    border-radius: 14px;
+}
+
+#sportThemes .palette-cell:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+}
+        /* 💎 Luxury Glow Border Animation */
+@keyframes luxuryGlow {
+    0% {
+        box-shadow: 0 0 6px rgba(0,153,255,0.2),
+                    0 0 12px rgba(0,153,255,0.1);
+        border-color: rgba(255,255,255,0.15);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(0,153,255,0.6),
+                    0 0 25px rgba(0,153,255,0.3);
+        border-color: rgba(0,153,255,0.5);
+    }
+    100% {
+        box-shadow: 0 0 6px rgba(0,153,255,0.2),
+                    0 0 12px rgba(0,153,255,0.1);
+        border-color: rgba(255,255,255,0.15);
+    }
+}
+
+/* Apply glow ONLY to luxury themes */
+#luxuryThemes .palette-cell {
+    animation: luxuryGlow 2.8s infinite ease-in-out;}
+    </style>
+</head>
+<body>
+
+    <div class="phone-container" id="mainPhoneFrame">
+        <div class="app-toast" id="appToast">Notification</div>
+
+        <div class="redeem-modal" id="redeemModal">
+            <div class="redeem-card">
+                <h3>Redeem Voucher Code</h3>
+                <p>Enter a premium voucher token to claim instant coin drops!</p>
+                <input type="text" class="redeem-input" id="redeemInput" placeholder="ENTER CODE HERE">
+                <div class="redeem-actions">
+                    <button class="redeem-btn-action btn-close" onclick="closeRedeemModal()">Cancel</button>
+                    <button class="redeem-btn-action btn-claim" onclick="processRedemptionCode()">Claim Drop</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="redeem-modal" id="subModal">
+            <div class="redeem-card">
+                <h3>💎 VIP Store Tiers</h3>
+                <p>Select your tier package plan to credit your wallet balance sheet.</p>
+                <div class="sub-tier-row" onclick="openPaymentGateway('Weekly Pass Plan', 500, 60)">
+                    <div><div class="sub-title">Weekly Pass</div><div class="sub-desc">+500 Premium Coins Pack</div></div>
+                    <div class="sub-price">₹60</div>
+                </div>
+                <div class="sub-tier-row" onclick="openPaymentGateway('Monthly Pass Plan', 2000, 199)">
+                    <div><div class="sub-title">Monthly Pass</div><div class="sub-desc">+2,000 Premium Coins Pack</div></div>
+                    <div class="sub-price">₹199</div>
+                </div>
+                <div class="sub-tier-row" onclick="openPaymentGateway('Yearly Pass Plan', 12000, 499)">
+                    <div><div class="sub-title">Yearly Pass</div><div class="sub-desc">+12,000 Premium Coins Pack</div></div>
+                    <div class="sub-price">₹499</div>
+                </div>
+                <button class="redeem-btn-action btn-close" style="width:100%; margin-top:10px;" onclick="closeSubModal()">Close</button>
+            </div>
+        </div>
+
+        <div class="redeem-modal" id="paymentModal" style="z-index: 190;">
+            <div class="redeem-card">
+                <h3 id="payModalTitle">Authorize Payment</h3>
+                <p id="payModalDesc">Processing securely...</p>
+                <div class="payment-input-group">
+                    <label>UPI ID OR CARD DEPOSIT NUMBER</label>
+                    <input type="text" class="redeem-input" id="paymentInput" placeholder="example@upi or 4111...">
+                </div>
+                <div class="redeem-actions">
+                    <button class="redeem-btn-action btn-close" onclick="closePaymentModal()">Cancel</button>
+                    <button class="redeem-btn-action btn-claim" onclick="executeSimulatedPayment()">Pay & Authorize</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="redeem-modal" id="deleteModal" style="z-index: 200;">
+            <div class="redeem-card" style="border: 1px solid rgba(231, 76, 60, 0.3); background: rgba(20,20,30,0.85);">
+                <h3 style="color: #FF4D4D;">Delete Note Memo?</h3>
+                <p style="color: rgba(255,255,255,0.7); font-size: 13px;">Are you sure you want to permanently delete this note template? This action cannot be reversed! 🗑️</p>
+                <div class="redeem-actions" style="margin-top: 20px;">
+                    <button class="redeem-btn-action btn-close" onclick="closeDeleteModal()">Cancel</button>
+                    <button class="redeem-btn-action" style="background: #E74C3C; color: white;" onclick="executeDeleteConfirm()">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="redeem-modal" id="themePurchaseModal" style="z-index: 210;">
+    <div class="redeem-card">
+        <h3>Confirm Purchase</h3>
+        <p>Are you sure you want to buy this theme for 50 coins?</p>
+        <div class="redeem-actions">
+            <button class="redeem-btn-action btn-close" onclick="document.getElementById('themePurchaseModal').style.display='none'">Cancel</button>
+            <button class="redeem-btn-action btn-claim" onclick="confirmThemePurchase()">OK</button>
+        </div>
+    </div>
+</div>
+
+        <div class="settings-drawer" id="settingsDrawer">
+            <span class="close-settings" onclick="toggleSettings()">✕</span>
+            <h2>Settings</h2>
+            <div class="setting-item"><span>Biometric Fingerprint</span><input type="checkbox" checked></div>
+            <div class="setting-item"><span>Haptic Feedback</span><input type="checkbox" checked></div>
+            <div class="setting-item"><span>Auto-Save Notes</span><input type="checkbox" checked></div>
+        </div>
+        
+        <div class="screen-feed" id="feedScreen">
+            <div class="feed-header">
+                <span class="menu-icon" onclick="toggleSettings()">☰</span>
+                <div class="header-right-group">
+                    <button class="vip-sub-btn" onclick="openSubModal()">💎 VIP</button>
+                    <div class="coin-counter"><span class="coin-circle"></span> <span id="coinDisplay">0</span></div>
+                </div>
+            </div>
+            <div class="category-row">
+                
+
+                <button class="tab-btn active" id="tabAll" onclick="switchCategory('All')">All</button>
+                <button class="tab-btn" id="tabHome" onclick="switchCategory('Home')">Home</button>
+                <button class="tab-btn" id="tabWork" onclick="switchCategory('Work')">Work</button>
+            </div>
+            <div class="content-body" id="feedBody">
+                <div class="empty-state" id="emptyState">
+                    <div class="cartoon-canvas">
+                        <div class="cartoon-eyes"></div>
+                        <div class="cartoon-cheeks"></div>
+                        <div class="cartoon-smile"></div>
+                    </div>
+                    <div class="bubble-prompt">Tap to add your first note ✨</div>
+                </div>
+                <div class="notes-grid" id="notesGrid" style="display: none;"></div>
+            </div>
+            <button class="fab-btn" onclick="openEditor()">+</button>
+        </div>
+
+        <div class="screen-editor" id="editorScreen">
+            <div class="editor-anim-overlay" id="animRain"></div>
+            <div class="editor-anim-overlay" id="animStars"></div>
+            <div class="editor-anim-overlay" id="animGrid"></div>
+            <div class="editor-anim-overlay" id="animSchool"></div>
+            <div class="editor-anim-overlay" id="animSport"></div>
+            <div class="editor-anim-overlay" id="animNature"></div>
+            <div class="editor-anim-overlay" id="animGirls"></div>
+            <div class="editor-anim-overlay" id="animBoys"></div>
+            <div class="editor-anim-overlay" id="animCartoon"></div>
+
+            <div class="editor-header glass-header-shield">
+                <span class="back-btn back-icon-circle" onclick="exitWithoutSaving()">✕</span>
+                <span id="currentCategoryLabel" style="font-weight:700; font-size:14px;">Folder</span>
+                <span class="back-btn back-icon-circle" style="color: #0099FF !important;" onclick="saveAndGoBack()">✓</span>
+            </div>
+            <div class="editor-inputs">
+                <input type="text" id="noteTitle" class="input-title" placeholder="Title">
+                <div class="checklist-container" id="checklistContainer">
+                    <div class="todo-item"><input type="checkbox"> <span contenteditable="true">Task Item</span></div>
+                </div>
+                <textarea id="noteContent" class="input-text" placeholder="Note here"></textarea>
+            </div>
+
+            <div class="style-tray" id="styleTray">
+                <select class="font-select" id="fontFamilySelect" onchange="applyFont(this.value)">
+                    <option value="sans-serif">Standard</option>
+                    <option value="monospace">Retro Code</option>
+                    <option value="serif">Elegant</option>
+                </select>
+                <div class="color-dot" style="background: #FFF;" onclick="applyTextColor('#FFF')"></div>
+                <div class="color-dot" style="background: #FF4D4D;" onclick="applyTextColor('#FF4D4D')"></div>
+                <div class="color-dot" style="background: #FFD700;" onclick="applyTextColor('#FFD700')"></div>
+                <div class="color-dot" style="background: #00FF87;" onclick="applyTextColor('#00FF87')"></div>
+            </div>
+
+            <div class="bottom-toolbar">
+                <div class="tool-widget-btn active" id="toolText" onclick="activateTool('text')">
+                    <svg class="vector-icon" viewBox="0 0 24 24"><path d="M5 4v3h5.5v12h3V7H19V4H5z"/></svg><span class="widget-label">TEXT</span>
+                </div>
+                <div class="tool-widget-btn" id="toolCheck" onclick="activateTool('check')">
+                    <svg class="vector-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span class="widget-label">LIST</span>
+                </div>
+                <div class="tool-widget-btn" id="toolStyle" onclick="toggleStyleTray()">
+                    <svg class="vector-icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-3C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6s1.5.67 1.5 1.5S10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3.5 3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg><span class="widget-label">STYLE</span>
+                </div>
+                <div class="tool-widget-btn" onclick="openRedeemModal()">
+                    <svg class="vector-icon" viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-.85-3-2-3-1.2 0-2.24.86-2.75 2V8H4v5z"/></svg><span class="widget-label">REDEEM</span>
+                </div>
+                <div class="tool-widget-btn" id="paletteIcon" onclick="toggleThemeDrawer()">
+                    <svg class="vector-icon" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span class="widget-label">THEMES</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="theme-drawer" id="themeDrawer">
+            <div class="drawer-tabs">
+                <div onclick="toggleThemeDrawer()" 
+style="
+position: absolute;
+top: 10px;
+right: 12px;
+width: 26px;
+height: 26px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(255,255,255,0.12);
+border: 1px solid rgba(255,255,255,0.2);
+color: white;
+font-size: 14px;
+cursor: pointer;
+z-index: 200;
+">
+✕
+</div>
+                <span class="active" onclick="switchDrawerTab('hot')">Hot 🔥</span>
+                <span onclick="switchDrawerTab('luxury')">Luxury 💎</span>
+                <span onclick="switchDrawerTab('school')">School 🎒</span>
+                <span onclick="switchDrawerTab('sport')">Sport ⚽</span>
+                <span onclick="switchDrawerTab('nature')">Nature 🍃</span>
+                <span onclick="switchDrawerTab('boys')">Boys 👦</span>
+                <span onclick="switchDrawerTab('girls')">Girls 👧</span>
+            </div>
+            
+            <div class="grid-container" id="hotThemes">
+                <div class="palette-cell active" style="background: rgba(255,255,255,0.06); color: rgb(245, 243, 243);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('rgba(255,255,255,0.06)', false, 0, this, 'none')">Glass</div>
+                <div class="palette-cell" style="background: #FFF9E6; color: #111;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FFF9E6', false, 0, this, 'none')">Yellow</div>
+                <div class="palette-cell" style="background: #EAF9EA; color: #111;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#EAF9EA', false, 0, this, 'none')">Green</div>
+                <div class="palette-cell" style="background: #E6F7FF; color: #111;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#E6F7FF', false, 0, this, 'none')">Blue</div>
+                <div class="palette-cell" style="background: #1A1A26; color: white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#1A1A26', false, 0, this, 'none')">Dark</div>
+                <div class="palette-cell" style="background: #2D142C; color: white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#2D142C', false, 0, this, 'none')">Wine</div>
+                <div class="palette-cell" style="background:#0F172A;color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#0F172A', false, 0, this, 'none')">Midnight</div>
+                <div class="palette-cell" style="background:#1E1B4B;color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#1E1B4B', false, 0, this, 'stars')">Galaxy</div>
+                <div class="palette-cell" style="background:#111827;color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#111827', false, 0, this, 'grid')">Cyber</div>
+               <div class="palette-cell"style="background: linear-gradient(135deg, #FFB6C1, #87CEEB);"onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #FFB6C1, #87CEEB)', false, 0, this, 'cartoon')">Cute Cartoon 🎀</div>
+            </div>
+
+            
+            <div class="grid-container" id="luxuryThemes" style="display: none;">
+                 <div class="palette-cell" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #0f0c29, #302b63, #24243e)', true, 50, this, 'stars')">Midnight Abyss<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #1a1a1a, #4a148c);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #1a1a1a, #4a148c)', true,50, this, 'stars')">Royal Amethyst<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #000000, #434343);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #000000, #434343)', true, 50, this, 'none')">Obsidian Noir<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #240b36, #c31432);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #240b36, #c31432)', true, 50, this, 'rain')">Crimson Velvet<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #134e5e, #71b280);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #134e5e, #71b280)', true, 50, this, 'nature')">Emerald Luxe<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #3d3393, #2b76b9);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #3d3393, #2b76b9)', true, 50, this, 'grid')">Deep Ocean<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #485563, #29323c);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #485563, #29323c)', true, 50, this, 'none')">Storm Steel<span class="crown-tag">👑</span></div>
+    
+    <div class="palette-cell" style="background: linear-gradient(135deg, #8e0e00, #1f1c18);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #8e0e00, #1f1c18)', true, 50, this, 'rain')">Burnt Copper<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #4b6cb7, #182848);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #4b6cb7, #182848)', true, 50, this, 'stars')">Midnight Sky<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #2c3e50, #000000);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #2c3e50, #000000)', true, 50, this, 'none')">Nightfall<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #000428, #004e92);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #000428, #004e92)', true, 50, this, 'stars')">Azure Deep<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)', true, 50, this, 'none')">Sunset Luxe<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #11998e, #38ef7d);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #11998e, #38ef7d)', true, 50, this, 'nature')">Jade Mint<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #f7971e, #ffd200);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #f7971e, #ffd200)', true, 50, this, 'none')">Golden Hour<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #667eea, #764ba2)', true, 50, this, 'stars')">Royal Violet<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #ff9a9e, #fecfef, #fbc2eb);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #ff9a9e, #fecfef, #fbc2eb)', true, 50, this, 'none')">Silk Pink<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #a1c4fd, #c2e9fb)', true, 50, this, 'none')">Cloud Soft<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #fad0c4, #ffd1ff);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #fad0c4, #ffd1ff)', true, 50, this, 'none')">Blush Luxe<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #d4fc79, #96e6a1)', true, 50, this, 'nature')">Lime Fresh<span class="crown-tag">👑</span></div>
+    <div class="palette-cell" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #e0c3fc, #8ec5fc)', true, 50, this, 'none')">Lavender Sky<span class="crown-tag">👑</span></div>
+</div>
+                 <div class="grid-container" id="schoolThemes" style="display: none;">
+                      <div class="palette-cell" style="background:#FFFDF5; border:1px solid #E0E0E0; color:#333;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FFFDF5',false,0,this,'school')">📖 Notebook White</div>
+                      <div class="palette-cell" style="background:#F3F6FF; border:1px solid #C7D2FE; color:#1F2937;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#F3F6FF',false,0,this,'school')">📘 Study Blue</div>
+                      <div class="palette-cell" style="background:#FFF3E0; border:1px solid #FFD699; color:#4A2C00;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FFF3E0',false,0,this,'school')">✏️ Pencil Desk</div>
+                      <div class="palette-cell" style="background:#F1F8E9; border:1px solid #AED581; color:#1B5E20;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#F1F8E9',false,0,this,'school')">📗 Green Board</div>
+                      <div class="palette-cell" style="background:linear-gradient(135deg,#FFFFFF,#F8FAFC); border:1px solid #E2E8F0; color:#111;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#FFFFFF,#F8FAFC)',false,0,this,'school')">📝 Clean Sheet</div>
+                      <div class="palette-cell" style="background:#FAFAFA; border:1px dashed #BDBDBD; color:#333;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FAFAFA',false,0,this,'school')">📄 Exam Paper</div>
+                      <div class="palette-cell" style="background:#E8F5E9; border:1px solid #81C784; color:#1B5E20;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#E8F5E9',false,0,this,'school')">📓 Class Notes</div>
+                      <div class="palette-cell" style="background:#E3F2FD; border:1px solid #64B5F6; color:#0D47A1;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#E3F2FD',false,0,this,'school')">📙 Science Lab</div>
+                      <div class="palette-cell" style="background:#FFF8E1; border:1px solid #FFD54F; color:#5D4037;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FFF8E1',false,0,this,'school')">📒 Homework Desk</div>
+                      <div class="palette-cell" style="background:#FCE4EC; border:1px solid #F48FB1; color:#880E4F;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FCE4EC',false,0,this,'school')">🖍️ Art Class Notes</div>
+            </div>              
+                      <div class="grid-container" id="sportThemes" style="display: none;">
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#22C55E,#15803D); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#22C55E,#15803D)',false,0,this,'sport')">⚽ Football Field</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#0EA5E9,#075985); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#0EA5E9,#075985)',false,0,this,'sport')">🏀 Basketball Court</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#F97316,#9A3412); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#F97316,#9A3412)',false,0,this,'sport')">🏏 Cricket Pitch</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#EF4444,#7F1D1D); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#EF4444,#7F1D1D)',false,0,this,'sport')">🏃 Athletics Track</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#14B8A6,#0F766E); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#14B8A6,#0F766E)',false,0,this,'sport')">🏊 Swimming Pool</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#A855F7,#5B21B6); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#A855F7,#5B21B6)',false,0,this,'sport')">🏸 Badminton Court</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#EAB308,#854D0E); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#EAB308,#854D0E)',false,0,this,'sport')">🥊 Boxing Ring</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#38BDF8,#1D4ED8); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#38BDF8,#1D4ED8)',false,0,this,'sport')">🏐 Volleyball Court</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#FB7185,#9F1239); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#FB7185,#9F1239)',false,0,this,'sport')">🎾 Tennis Court</div>
+                           <div class="palette-cell" style="background: linear-gradient(135deg,#34D399,#065F46); color:white;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg,#34D399,#065F46)',false,0,this,'sport')">🏆 Champion Arena</div>
+            </div> 
+                           <div class="grid-container" id="natureThemes" style="display: none;">
+                <div class="palette-cell" style="background: #E8F5E9; color:#333;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#E8F5E9', false, 50, this, 'nature')">Mint</div>
+                <div class="palette-cell" style="background: linear-gradient(135deg, #A1FFCE, #FAFFD1);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #A1FFCE, #FAFFD1)', true, 20, this, 'nature')">Forest<span class="crown-tag">👑</span></div>
+            </div>
+            <div class="grid-container" id="boysThemes" style="display: none;">
+                <div class="palette-cell" style="background: #EBF5FB; color:#333;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#EBF5FB', false, 50, this, 'boys')">Lofi Boy</div>
+                <div class="palette-cell" style="background: linear-gradient(135deg, #2C3E50, #3498DB);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #2C3E50, #3498DB)', true, 40, this, 'boys')">Mecha<span class="crown-tag">👑</span></div>
+            </div>
+            <div class="grid-container" id="girlsThemes" style="display: none;">
+                <div class="palette-cell" style="background: #FDEDEC; color:#333;" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('#FDEDEC', false, 50, this, 'girls')">Aesthetic</div>
+                <div class="palette-cell" style="background: linear-gradient(135deg, #FF9FF3, #FECA57);" onclick="showNotification('Luxury Theme Applied! ✨', true); changeBg('linear-gradient(135deg, #FF9FF3, #FECA57)', true, 40, this, 'girls')">Sakura<span class="crown-tag">👑</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pendingTheme = null;
+        let coins = parseInt(localStorage.getItem('easynotes_coins')) || 0;
+        document.getElementById('coinDisplay').innerText = coins;
+        
+       let activeCategory = 'All',
+    currentSelectedBg = 'rgba(255,255,255,0.06)',
+    savedNotesArray = JSON.parse(localStorage.getItem("easynotes_notes")) || []; 
+    window.onload = function() {renderFilterGrid();};
+        let currentlyEditingIndex = null;
+        let selectedPendingPackage = null;
+        let pendingDeleteIndex = null;
+
+        function showNotification(text, isLuxury = false) {
+    let toast = document.getElementById('appToast');
+    toast.innerText = text;
+    
+    // Add the luxury class if the second argument is true
+    if (isLuxury) {
+        toast.className = 'app-toast luxury-glass show';
+    } else {
+        toast.className = 'app-toast show';
+    }
+    
+    // Auto-hide after 2.5 seconds
+    setTimeout(() => {
+        toast.className = 'app-toast'; 
+    }, 2500);
+}
+        function toggleSettings() { document.getElementById('settingsDrawer').classList.toggle('open'); }
+        function toggleStyleTray() { let tray = document.getElementById('styleTray'); tray.style.display = (tray.style.display === 'flex') ? 'none' : 'flex'; }
+        function applyFont(font) { document.getElementById('noteContent').style.fontFamily = font; }
+        function applyTextColor(color) { document.getElementById('noteContent').style.color = color; }
+        function openRedeemModal() { document.getElementById('redeemModal').style.display = 'flex'; }
+        function closeRedeemModal() { document.getElementById('redeemModal').style.display = 'none'; document.getElementById('redeemInput').value = ""; }
+        function openSubModal() { document.getElementById('subModal').style.display = 'flex'; }
+        function closeSubModal() { document.getElementById('subModal').style.display = 'none'; }
+
+        function openPaymentGateway(tier, coinsAmount, priceInr) {
+            selectedPendingPackage = { name: tier, amt: coinsAmount, cost: priceInr };
+            document.getElementById('payModalTitle').innerText = `Pay ₹${priceInr}`;
+            document.getElementById('payModalDesc').innerText = `Verify authentication details to send secure payment via UPI/Bank App for ${coinsAmount} Coins.`;
+            document.getElementById('paymentInput').value = "";
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+        function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; selectedPendingPackage = null; }
+
+        function executeSimulatedPayment() {
+            let userField = document.getElementById('paymentInput').value.trim();
+            if(userField === "") { showNotification("Please input authorization details! 🛑"); return; }
+            if (selectedPendingPackage) {
+                coins += selectedPendingPackage.amt;
+                localStorage.setItem('easynotes_coins', coins);
+                document.getElementById('coinDisplay').innerText = coins;
+                showNotification(`Payment Success! Received ₹${selectedPendingPackage.cost}. Unlocked +${selectedPendingPackage.amt} Coins 💎🚀`);
+                closePaymentModal(); closeSubModal(); renderFilterGrid();
+            }
+        }
+
+        function processRedemptionCode() {
+            let code = document.getElementById('redeemInput').value.trim().toUpperCase();
+            if (code === "") { showNotification("Field is blank! 🛑"); return; }
+            if (code === "EASY1000") {
+                if (localStorage.getItem('claimed_code_easy1000') === 'true') { showNotification("Code already used! 🛑"); return; }
+                coins += 1000; localStorage.setItem('easynotes_coins', coins); document.getElementById('coinDisplay').innerText = coins;
+                localStorage.setItem('claimed_code_easy1000', 'true'); showNotification("+1000 Coins drop added! 🪙"); closeRedeemModal(); return;
+            }
+            if (code === "FREE5000") {
+                let count = parseInt(localStorage.getItem('claimed_count_free5000')) || 0;
+                if (count >= 1000) { showNotification("Max use limit reached! 🛑"); closeRedeemModal(); return; }
+                count++; coins += 5000;
+                localStorage.setItem('claimed_count_free5000', count); localStorage.setItem('easynotes_coins', coins);
+                document.getElementById('coinDisplay').innerText = coins;
+                showNotification(`+5000 Coins drop active! (${1000 - count} left) 🚀`); closeRedeemModal(); return;
+            }
+            showNotification("Invalid Voucher Code! ✕");
+        }
+
+        function openEditor() { 
+            currentlyEditingIndex = null;
+            document.getElementById('noteTitle').value = "";
+            document.getElementById('noteContent').value = "";
+            document.getElementById('mainPhoneFrame').classList.remove('light-theme-view');
+            document.getElementById('feedScreen').style.display = 'none'; 
+            document.getElementById('editorScreen').style.display = 'flex'; 
+            document.getElementById('editorScreen').style.background = currentSelectedBg; 
+        }
+        function loadNoteForEditing(index) {
+            currentlyEditingIndex = index;
+            let note = savedNotesArray[index];
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteContent').value = note.content;
+            currentSelectedBg = note.bg;
+            
+            let frame = document.getElementById('mainPhoneFrame');
+           
+                
+           
+            
+            document.getElementById('feedScreen').style.display = 'none';
+            document.getElementById('editorScreen').style.display = 'flex';
+            document.getElementById('editorScreen').style.background = note.bg;
+        }
+
+        function deleteNoteItem(index, eventEvent) {
+    if(eventEvent){
+        eventEvent.stopPropagation();
+    } 
+            pendingDeleteIndex = index;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+        function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; pendingDeleteIndex = null; }
+        function executeDeleteConfirm() {
+            if(pendingDeleteIndex !== null) {
+                savedNotesArray.splice(pendingDeleteIndex, 1);
+                showNotification("Note Erased! ✕");
+                closeDeleteModal(); renderFilterGrid();
+            }
+        }
+
+        function exitWithoutSaving() { document.getElementById('noteTitle').value = ""; document.getElementById('noteContent').value = ""; document.getElementById('themeDrawer').classList.remove('open'); document.getElementById('styleTray').style.display = 'none'; document.getElementById('editorScreen').style.display = 'none'; document.getElementById('feedScreen').style.display = 'flex'; }
+        
+        function saveAndGoBack() {
+            let t = document.getElementById('noteTitle').value.trim(), c = document.getElementById('noteContent').value.trim();
+            if (t !== "" || c !== "") {
+                if (currentlyEditingIndex !== null) {
+                    savedNotesArray[currentlyEditingIndex] = { title: t, content: c, bg: currentSelectedBg, category: activeCategory };
+                    localStorage.setItem("easynotes_notes", JSON.stringify(savedNotesArray));
+                    showNotification("Note Updated Successfully! ✨");
+                } else {
+                savedNotesArray.push({ title: t, content: c, bg: currentSelectedBg,category: activeCategory,favorite: false});
+                localStorage.setItem("easynotes_notes", JSON.stringify(savedNotesArray))
+
+                    let notesCount = savedNotesArray.length;
+                    if (notesCount % 5 === 0) {
+                        coins += 15; localStorage.setItem('easynotes_coins', coins); document.getElementById('coinDisplay').innerText = coins;
+                        showNotification("Milestone! 5 Notes Written: +15 Coins Drop! 🪙🔥");
+                    } else { showNotification(`Note Saved! (${5 - (notesCount % 5)} more notes for +15 coins)`); }
+                }
+                renderFilterGrid();
+            }
+            exitWithoutSaving();
+        }
+
+        function renderFilterGrid() {
+            let g = document.getElementById('notesGrid'), e = document.getElementById('emptyState'); g.innerHTML = "";
+            let hasVisibleNotes = false;
+            savedNotesArray.forEach((note, index) => {
+                if (activeCategory === 'All' || note.category === activeCategory) {
+                    hasVisibleNotes = true;
+                    let card = document.createElement('div'); card.className = 'saved-card'; card.style.background = note.bg; card.setAttribute('onclick', `loadNoteForEditing(${index})`);
+                    card.innerHTML = `<div class="delete-card-btn" onclick="deleteNoteItem(${index}, event)">X</div><h4>${note.title || 'Untitled'}</h4><p>${note.content || 'Empty...'}</p>`;
+                    g.appendChild(card);
+                }
+            });
+            if(hasVisibleNotes) { e.style.display = 'none'; g.style.display = 'grid'; } else { g.style.display = 'none'; e.style.display = 'flex'; }
+        }
+        function switchCategory(cat) { activeCategory = cat; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); document.getElementById('tab' + cat).classList.add('active'); renderFilterGrid(); }
+        function switchDrawerTab(tabId) { document.querySelectorAll('.drawer-tabs span').forEach(s => s.classList.remove('active')); ['hot','luxury','school','sport','nature','boys','girls'].forEach(t => document.getElementById(t+'Themes').style.display = 'none'); event.target.classList.add('active'); document.getElementById(tabId + 'Themes').style.display = 'grid'; }
+        function toggleThemeDrawer() { document.getElementById('themeDrawer').classList.toggle('open'); }
+function changeBg(val, isPrem, cost, elem, anim) {
+    let unlockedThemes = JSON.parse(localStorage.getItem('unlockedThemes') || '[]');
+
+    // 1. The Gatekeeper
+    if (isPrem && !unlockedThemes.includes(val)) {
+        pendingTheme = { val, elem, anim };
+        document.getElementById('themePurchaseModal').style.display = 'flex';
+        return;
+    }
+
+    // 2. The Visual Applier
+    currentSelectedBg = val;
+    document.getElementById('editorScreen').style.background = val;
+
+    let frame = document.getElementById('mainPhoneFrame');
+    if(val.startsWith('#E') || val.startsWith('#F') || val === '#FFF' || val === 'rgba(255,255,255,0.9)') {
+        frame.classList.add('light-theme-view');
+    } else {
+        frame.classList.remove('light-theme-view');
+    }
+
+    ['Rain','Stars','Grid','School','Sport','Nature','Girls','Boys'].forEach(a => document.getElementById('anim'+a).style.display = 'none');
+    if (anim !== 'none') document.getElementById('anim' + anim.charAt(0).toUpperCase() + anim.slice(1)).style.display = 'block';
+
+    document.querySelectorAll('.palette-cell').forEach(c => c.classList.remove('active'));
+    if(elem) elem.classList.add('active');
+    }
+
+
+
+    // 4. Close the modal and clear the temporary variable
+   function confirmThemePurchase() {
+    if (!pendingTheme) return;
+    let { val, elem, anim } = pendingTheme;
+    
+    // ... all your coin deduction and logic here ...
+
+    // Apply the theme
+    changeBg(val, false, 0, elem, anim);
+
+    // NOW, put the cleanup lines HERE:
+    document.getElementById('themePurchaseModal').style.display = 'none';
+    pendingTheme = null;
+}
+ </script>
+</body>
+</html>
